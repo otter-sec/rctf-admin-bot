@@ -3,6 +3,9 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 const challenges = new Map([
   ['one', {
     name: 'Challenge One',
+    restrict_domains: {
+      'example.com': ['one.example.com'],
+    },
     timeout: 10000,
     handler: async (url, ctx) => {
       const page = await ctx.newPage()

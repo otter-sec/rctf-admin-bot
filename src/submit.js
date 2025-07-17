@@ -11,7 +11,11 @@ server.run({}, async (req) => {
   const challengeId = req.pathname.slice(1)
   const challenge = config.challenges.get(challengeId)
   if (!challenge) {
-    return { statusCode: 404 }
+    return {
+      statusCode: 404,
+      headers: { 'content-type': 'text/plain' },
+      body: 'Challenge not found. Are you looking for /[challenge_name] instead?',
+    }
   }
   if (req.method === 'GET') {
     const page = mustache.render(submitPage, {

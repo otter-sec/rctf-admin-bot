@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1.4.3
 
-FROM node:18.9.0-buster-slim AS build
+FROM node:24-slim AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
   g++ make cmake unzip libcurl4-openssl-dev autoconf libtool python3 curl
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:18.9.0-buster-slim
+FROM node:24-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
