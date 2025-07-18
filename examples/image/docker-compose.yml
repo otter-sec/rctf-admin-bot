@@ -1,0 +1,14 @@
+services:
+  submit:
+    build: .
+    network_mode: host
+    command: submit
+    environment:
+      - PORT=8080
+
+  visit:
+    build: .
+    network_mode: host
+    command: visit
+    environment:
+      - PORT=8081

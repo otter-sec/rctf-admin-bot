@@ -1,0 +1,9 @@
+project = ""
+image = ""
+
+# Optional:
+#recaptcha = {
+#    site = ""
+#    secret = ""
+#}
+#visit_min_scale = 4 # useful to have more bot instances during the competition to deal with spikes in submissions
