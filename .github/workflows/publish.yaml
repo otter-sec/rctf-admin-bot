@@ -28,5 +28,3 @@ jobs:
           tags: |
             ghcr.io/otter-sec/rctf-admin-bot:${{ github.sha }}
             ghcr.io/otter-sec/rctf-admin-bot:${{ github.ref_name }}
-          cache-from: type=registry,ref=ghcr.io/otter-sec/rctf-admin-bot:main
-          cache-to: type=inline
