@@ -1,53 +1,23 @@
-# [redpwn/admin-bot](https://hub.docker.com/r/redpwn/admin-bot)
+# rctf-admin-bot
 
 A scalable service for client-side web CTF challenges
 
 ## Quick Start
 
-### GCP
-
-In [`examples/gcp`](https://github.com/redpwn/admin-bot/tree/master/examples/gcp), run:
-
-```sh
-gcloud auth application-default login
-terraform init
-terraform apply --var "project=$(gcloud config get-value project)"
-```
-
-### AWS
-
-In [`examples/aws`](https://github.com/redpwn/admin-bot/tree/master/examples/aws), run:
-
-```sh
-aws configure
-repo=$(aws ecr create-repository --repository-name admin-bot --region us-east-1 --query repository.repositoryUri --output text)
-docker pull redpwn/admin-bot-example
-docker tag redpwn/admin-bot-example "$repo"
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$repo"
-docker push "$repo"
-terraform init
-terraform apply --var "image=$(docker image inspect "$repo" -f '{{ index .RepoDigests 0 }}')"
-```
-
-After applying, Terraform outputs a `submit_url`. To submit a URL to the admin bot, visit `<submit_url>/one`.
+Please see https://rctf.osec.io/running_a_successful_ctf/deploying_challenges/#admin-bot
 
 ## Deployment
 
-1. Create a [`config.js` file](#challenge-configuration) and a [`Dockerfile`](https://github.com/redpwn/admin-bot/blob/master/examples/image/Dockerfile).
+1. Create a [`config.js` file](#challenge-configuration) and a [`Dockerfile`](https://github.com/otter-sec/rctf-admin-bot/blob/master/examples/image/Dockerfile)
+2. Build and push the image to your desired Docker registry
+3. Deploy the image using the appropriate deployment files [here](https://github.com/otter-sec/rctf-admin-bot/tree/main/examples)
 
-### GCP
-
-1. Build and push the image to [`gcr.io`](https://cloud.google.com/container-registry) or [`pkg.dev`](https://cloud.google.com/artifact-registry).
-2. Use the [Terraform module](https://registry.terraform.io/modules/redpwn/admin-bot/google/latest) to deploy to Cloud Run.
-
-### AWS
-
-1. Build and push the image to [ECR](https://aws.amazon.com/ecr/).
-2. Use the [Terraform module](https://registry.terraform.io/modules/redpwn/admin-bot/aws/latest) to deploy to Fargate and Lambda.
+For user attachments, the `image/` deployment can be included instead of having to integrate admin bot directly into the challenge's source code. This
+also has the side benefit of matching exactly how the remote's admin bot functions.
 
 ## Challenge Configuration
 
-The [`config.js` file](https://github.com/redpwn/admin-bot/blob/master/examples/image/config.js) must export a `Map` named `challenges`.
+The [`config.js` file](https://github.com/otter-sec/rctf-admin-bot/blob/master/examples/image/config.js) must export a `Map` named `challenges`.
 
 The key of each entry is its challenge ID. To submit a URL to the admin bot, visit `/<challenge id>`.
 
@@ -69,18 +39,5 @@ fail.  For example, if all challenges are hosted under `example.com`, one can re
 ```
 Behind the scenes, the --proxy-pac-url flag is used to tell browser how the restricted URLs should be handled.
 
-Additionally, to mitigate possible Chrome vulnerabilities, JIT/WebAssembly is disabled.
-
-## Terraform Configuration
-
-### GCP
-
-Terraform module: [`redpwn/admin-bot/google`](https://registry.terraform.io/modules/redpwn/admin-bot/google/latest).
-
-Example configuration: [`examples/gcp/main.tf`](https://github.com/redpwn/admin-bot/blob/master/examples/gcp/main.tf).
-
-### AWS
-
-Terraform module: [`redpwn/admin-bot/aws`](https://registry.terraform.io/modules/redpwn/admin-bot/aws/latest).
-
-Example configuration: [`examples/aws/main.tf`](https://github.com/redpwn/admin-bot/blob/master/examples/aws/main.tf).
+Additionally, to mitigate possible Chrome vulnerabilities, JIT/WebAssembly is disabled. The base image provided by this repository is automatically
+updated weekly to keep up to date with patches.

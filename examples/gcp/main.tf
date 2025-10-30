@@ -12,6 +12,15 @@ provider "google" {
   region  = var.region
 }
 
+resource "google_project_service" "services" {
+  for_each = toset([
+    "run.googleapis.com"
+  ])
+
+  service = each.value
+  disable_on_destroy = false # leave the service enabled
+}
+
 resource "google_pubsub_topic" "topic" {
   name = var.prefix
 }
@@ -57,6 +66,10 @@ resource "google_cloud_run_service" "submit" {
     percent         = 100
     latest_revision = true
   }
+
+  depends_on = [
+    google_project_service.services
+  ]
 }
 
 resource "google_cloud_run_service_iam_binding" "submit" {
@@ -65,6 +78,10 @@ resource "google_cloud_run_service_iam_binding" "submit" {
   role     = "roles/run.invoker"
   members = [
     "allUsers",
+  ]
+
+  depends_on = [
+    google_project_service.services
   ]
 }
 
@@ -116,6 +133,10 @@ resource "google_cloud_run_service" "visit" {
     percent         = 100
     latest_revision = true
   }
+
+  depends_on = [
+    google_project_service.services
+  ]
 }
 
 resource "google_service_account" "visit" {
